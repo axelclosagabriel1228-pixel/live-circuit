@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logic Gates — Illustrated Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --panel: #0f1526;
+    --border: #1e2d4a;
+    --glow-cyan: #00f5ff;
+    --glow-green: #39ff6a;
+    --glow-amber: #ffb700;
+    --glow-pink: #ff4dbb;
+    --glow-purple: #b060ff;
+    --text: #c8d8f0;
+    --dim: #5a7090;
+    --wire: #1a5080;
+    --wire-active: #00f5ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(0,245,255,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(176,96,255,0.05) 0%, transparent 60%),
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+    font-family: 'Space Mono', monospace;
+    color: var(--text);
+    min-height: 100vh;
+    padding: 40px 20px 60px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 60px;
+    position: relative;
+  }
+
+  .header-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--glow-cyan);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    opacity: 0.7;
+  }
+
+  h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: clamp(28px, 5vw, 52px);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0 0 30px rgba(0,245,255,0.5), 0 0 60px rgba(0,245,255,0.2);
+    line-height: 1.1;
+  }
+
+  h1 span { color: var(--glow-cyan); }
+
+  .subtitle {
+    margin-top: 14px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--dim);
+    letter-spacing: 2px;
+  }
+
+  .gates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 28px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .gate-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: default;
+  }
+
+  .gate-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+  }
+
+  .gate-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px var(--accent);
+  }
+
+  .gate-card:hover .svg-wrapper {
+    filter: drop-shadow(0 0 8px var(--accent));
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .gate-name {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-shadow: 0 0 10px var(--accent);
+  }
+
+  .gate-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    padding: 3px 10px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    letter-spacing: 2px;
+    opacity: 0.7;
+    border-radius: 1px;
+  }
+
+  .svg-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px 16px;
+    transition: filter 0.3s ease;
+  }
+
+  .card-body {
+    padding: 0 20px 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .info-block { }
+
+  .info-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .info-value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 400;
+  }
+
+  .expr {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 18px;
+    color: var(--accent);
+    text-shadow: 0 0 8px var(--accent);
+  }
+
+  .truth-table {
+    grid-column: 1 / -1;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+
+  .truth-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+  }
+
+  .truth-table th {
+    background: rgba(255,255,255,0.04);
+    padding: 6px 12px;
+    text-align: center;
+    color: var(--dim);
+    letter-spacing: 2px;
+    font-size: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .truth-table td {
+    padding: 6px 12px;
+    text-align: center;
+    border-bottom: 1px solid rgba(30,45,74,0.5);
+    color: var(--text);
+  }
+
+  .truth-table tr:last-child td { border-bottom: none; }
+
+  .truth-table td.one {
+    color: var(--glow-green);
+    text-shadow: 0 0 6px var(--glow-green);
+    font-weight: bold;
+  }
+
+  .truth-table td.zero {
+    color: var(--dim);
+  }
+
+  .gate-desc {
+    grid-column: 1 / -1;
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--dim);
+    border-left: 2px solid var(--accent);
+    padding-left: 10px;
+    opacity: 0.85;
+  }
+
+  /* Section for combination gates */
+  .section-label {
+    max-width: 1200px;
+    margin: 50px auto 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Animated scan line */
+  @keyframes scanline {
+    0% { top: -2px; }
+    100% { top: 100%; }
+  }
+
+  .gate-card::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,245,255,0.15), transparent);
+    top: -2px;
+    animation: scanline 4s linear infinite;
+    pointer-events: none;
+  }
+
+  /* Glow pulse on hover */
+  @keyframes pulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+  }
+
+  .gate-card:hover .gate-name {
+    animation: pulse 1.5s ease infinite;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 60px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 3px;
+    opacity: 0.5;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-tag">// boolean algebra — visual reference</div>
+  <h1>Logic <span>Gates</span></h1>
+  <div class="subtitle">IEEE Standard Symbols &nbsp;·&nbsp; Truth Tables &nbsp;·&nbsp; Boolean Expressions</div>
+</header>
+
+<!-- BASIC GATES -->
+<div class="section-label">Basic Gates</div>
+
+<div class="gates-grid">
+
+  <!-- NOT / INVERTER -->
+  <div class="gate-card" style="--accent: var(--glow-cyan)">
+    <div class="card-header">
+      <div class="gate-name">NOT</div>
+      <div class="gate-badge">INVERTER</div>
+    </div>
+    <div class="svg-wrapper">
+      <svg width="300" height="130" viewBox="0 0 300 130">
+        <!-- wires -->
+        <line x1="30" y1="65" x2="85" y2="65" stroke="#1a5080" stroke-width="2.5"/>
+        <line x1="215" y1="65" x2="270" y2="65" stroke="#1a5080" stroke-width="2.5"/>
+        <!-- input label -->
+        <text x="24" y="60" fill="#00f5ff" font-family="Share Tech Mono" font-size="12" text-anchor="middle" opacity="0.6">x</text>
+        <!-- output label -->
+        <text x="276" y="60" fill="#00f5ff" font-family="Share Tech Mono" font-size="12" text-anchor="middle" opacity="0.6">x̄</text>
+        <!-- Triangle body -->
+        <polygon points="85,30 85,100 205,65"
+          fill="none" stroke="#00f5ff" stroke-width="2.5"
+          stroke-linejoin="round"
+          filter="url(#glow-cyan)"/>
+        <!-- Bubble circle at output -->
+        <circle cx="215" cy="65" r="10"
+          fill="#0a0e1a" stroke="#00f5ff" stroke-width="2.5"
+          filter="url(#glow-cyan)"/>
+        <!-- Input dot -->
+        <circle cx="85" cy="65" r="4" fill="#00f5ff" opacity="0.5"/>
+        <!-- value 0 -->
+        <text x="30" y="95" fill="#00f5ff" font-family="Share Tech Mono" font-size="11" text-anchor="middle" opacity="0.4">0 →</text>
+        <text x="270" y="95" fill="#39ff6a" font-family="Share Tech Mono" font-size="11" text-anchor="middle" opacity="0.4">→ 1</text>
+        <!-- glow filter -->
+        <defs>
+          <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+      </svg>
+    </div>
+    <div class="card-body">
+      <div class="info-block">
+        <div class="info-label">Expression</div>
+        <div class="expr">F = x̄</div>
+      </div>
+      <div class="info-block">
+        <div class="info-label">Logic Op</div>
+        <div class="info-value">¬x (NOT)</div>
+      </div>
+      <div class="truth-table">
+        <table>
+          <tr><th>INPUT x</th><th>OUTPUT x̄</th></tr>
+          <tr><td class="zero">0</td><td class="one">1</td></tr>
+          <tr><td class="one">1</td><td class="zero">0</td></tr>
+        </table>
+      </div>
+      <div class="gate-desc">Inverts its single input. If input is 0, output is 1. If input is 1, output is 0. The small circle (bubble) at the output is the inversion indicator.</div>
+    </div>
+  </div>
+
+  <!-- AND GATE -->
+  <div class="gate-card" style="--accent: var(--glow-green)">
+    <div class="card-header">
+      <div class="gate-name">AND</div>
+      <div class="gate-badge">CONJUNCTION</div>
+    </div>
+    <div class="svg-wrapper">
+      <svg width="300" height="140" viewBox="0 0 300 140">
+        <defs>
+          <filter id="glow-green" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <!-- Input wires -->
+        <line x1="30" y1="50" x2="85" y2="50" stroke="#1a5080" stroke-width="2.5"/>
+        <line x1="30" y1="90" x2="85" y2="90" stroke="#1a5080" stroke-width="2.5"/>
+        <!-- Output wire -->
+        <line x1="210" y1="70" x2="270" y2="70" stroke="#1a5080" stroke-width="2.5"/>
+        <!-- Labels -->
+        <text x="20" y="46" fill="#39ff6a" font-family="Share Tech Mono" font-size="12" opacity="0.6">x</text>
+        <text x="20" y="86" fill="#39ff6a" font-family="Share Tech Mono" font-size="12" opacity="0.6">y</text>
+        <text x="278" y="66" fill="#39ff6a" font-family="Share Tech Mono" font-size="12" opacity="0.6">F</text>
+        <!-- AND Gate body: flat left, rounded right -->
+        <path d="M85,30 L85,110 L155,110 Q210,110 210,70 Q210,30 155,30 Z"
+          fill="none" stroke="#39ff6a" stroke-width="2.5"
+          stroke-linejoin="round" filter="url(#glow-green)"/>
+        <!-- Input dots -->
+        <circle cx="85" cy="50" r="4" fill="#39ff6a" opacity="0.5"/>
+        <circle cx="85" cy="90" r="4" fill="#39ff6a" opacity="0.5"/>
+        <!-- Output dot -->
+        <circle cx="210" cy="70" r="4" fill="#39ff6a" opacity="0.5"/>
+        <!-- x·y label inside -->
+        <text x="143" y="76" fill="#39ff6a" font-family="Share Tech Mono" font-size="14" text-anchor="middle" opacity="0.35">x·y</text>
+      </svg>
+    </div>
+    <div class="card-body">
+      <div class="info-block">
+        <div class="info-label">Expression</div>
+        <div class="expr">F = x·y</div>
+      </div>
+      <div class="info-block">
+        <div class="info-label">Logic Op</div>
+        <div class="info-value">x ∧ y (AND)</div>
+      </div>
+      <div class="truth-table">
+        <table>
+          <tr><th>x</th><th>y</th><th>F = x·y</th></tr>
+          <tr><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+          <tr><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
+          <tr><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+          <tr><td class="one">1</td><td class="one">1</td><td class="one">1</td></tr>
+        </table>
+      </div>
+      <div class="gate-desc">Output is 1 only when ALL inputs are 1. Identified by its flat left side and rounded right. The shape is called a "D with a flat back."</div>
+    </div>
+  </div>
+
+  <!-- OR GATE -->
+  <div class="gate-card" style="--accent: var(--glow-amber)">
+    <div class="card-header">
+      <div class="gate-name">OR</div>
+      <div class="gate-badge">DISJUNCTION</div>
+    </div>
+    <div class="svg-wrapper">
+      <svg width="300" height="140" viewBox="0 0 300 140">
+        <defs>
+          <filter id="glow-amber" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <!-- Input wires -->
+        <line x1="30" y1="50" x2="95" y2="50" stroke="#1a5080" stroke-width="2.5"/>
+        <line x1="30" y1="90" x2="95" y2="90" stroke="#1a5080" stroke-width="2.5"/>
+        <!-- Output wire -->
+        <line x1="213" y1="70" x2="270" y2="70" stroke="#1a5080" stroke-width="2.5"/>
+        <!-- Labels -->
+        <text x="20" y="46" fill="#ffb700" font-family="Share Tech Mono" font-size="12" opacity="0.6">x</text>
+        <text x="20" y="86" fill="#ffb700" font-family="Share Tech Mono" font-size="12" opacity="0.6">y</text>
+        <text x="278" y="66" fill="#ffb700" font-family="Share Tech Mono" font-size="12" opacity="0.6">F</text>
+        <!-- OR Gate body: curved shield shape -->
+        <!-- Left curved edge + top arc + bottom arc -->
+        <path d="M90,30 Q120,70 90,110 Q140,110 165,110 Q213,95 213,70 Q213,45 165,30 Q140,30 90,30 Z"
+          fill="none" stroke="#ffb700" stroke-width="2.5"
+          stroke-linejoin="round" filter="url(#glow-amber)"/>
+        <!-- Input dots (adjusted for curved left edge) -->
+        <circle cx="95" cy="50" r="4" fill="#ffb700" opacity="0.5"/>
+        <circle cx="95" cy="90" r="4" fill="#ffb700" opacity="0.5"/>
+        <!-- Output dot -->
+        <circle cx="213" cy="70" r="4" fill="#ffb700" opacity="0.5"/>
+        <!-- x+y label inside -->
+        <text x="160" y="76" fill="#ffb700" font-family="Share Tech Mono" font-size="14" text-anchor="middle" opacity="0.35">x+y</text>
+      </svg>
+    </div>
+    <div class="card-body">
+      <div class="info-block">
+        <div class="info-label">Expression</div>
+        <div class="expr">F = x+y</div>
+      </div>
+      <div class="info-block">
+        <div class="info-label">Logic Op</div>
+        <div class="info-value">x ∨ y (OR)</div>
+      </div>
+      <div class="truth-table">
+        <table>
+          <tr><th>x</th><th>y</th><th>F = x+y</th></tr>
+          <tr><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+          <tr><td class="zero">0</td><td class="one">1</td><td class="one">1</td></tr>
+          <tr><td class="one">1</td><td class="zero">0</td><td class="one">1</td></tr>
+          <tr><td class="one">1</td><td class="one">1</td><td class="one">1</td></tr>
+        </table>
+      </div>
+      <div class="gate-desc">Output is 1 if at least one input is 1. Identified by its curved "shield" or "arrowhead" shape. Both sides are curved, unlike the AND gate.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DERIVED GATES -->
+<div class="section-label">Derived Gates (NOT + Basic)</div>
+
+<div class="gates-grid">
+
+  <!-- NAND GATE -->
+  <div class="gate-card" style="--accent: var(--glow-pink)">
+    <div class="card-header">
+      <div class="gate-name">NAND</div>
+      <div class="gate-badge">NOT AND</div>
+    </div>
+    <div class="svg-wrapper">
+      <svg width="300" height="140" viewBox="0 0 300 140">
+        <defs>
+          <filter id="glow-pink" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <line x1="30" y1="50" x2="85" y2="50" stroke="#1a5080" stroke-width="2.5"/>
+        <line x1="30" y1="90" x2="85" y2="90" stroke="#1a5080" stroke-width="2.5"/>
+        <line x1="220" y1="70" x2="270" y2="70" stroke="#1a5080" stroke-width="2.5"/>
+        <text x="20" y="46" fill="#ff4dbb" font-family="Share Tech Mono" font-size="12" opacity="0.6">x</text>
+        <text x="20" y="86" fill="#ff4dbb" font-family="Share Tech Mono" font-size="12" opacity="0.6">y</text>
+        <text x="278" y="66" fill="#ff4dbb" font-family="Share Tech Mono" font-size="12" opacity="0.6">F</text>
+        <!-- AND body -->
+        <path d="M85,30 L85,110 L155,110 Q208,110 208,70 Q208,30 155,30 Z"
+          fill="none" stroke="#ff4dbb" stroke-width="2.5"
+          stroke-linejoin="round" filter="url(#glow-pink)"/>
+        <!-- NOT bubble -->
+        <circle cx="218" cy="70" r="10"
+          fill="#0a0e1a" stroke="#ff4dbb" stroke-width="2.5"
+          filter="url(#glow-pink)"/>
+        <circle cx="85" cy="50" r="4" fill="#ff4dbb" opacity="0.5"/>
+        <circle cx="85" cy="90" r="4" fill="#ff4dbb" opacity="0.5"/>
+        <!-- bubble center dot -->
+        <circle cx="218" cy="70" r="2" fill="#ff4dbb" opacity="0.6"/>
+        <text x="143" y="76" fill="#ff4dbb" font-family="Share Tech Mono" font-size="11" text-anchor="middle" opacity="0.3">x·y̅</text>
+      </svg>
+    </div>
+    <div class="card-body">
+      <div class="info-block">
+        <div class="info-label">Expression</div>
+        <div class="expr">F = x̄·ȳ</div>
+      </div>
+      <div class="info-block">
+        <div class="info-label">Equivalent</div>
+        <div class="info-value">¬(x ∧ y)</div>
+      </div>
+      <div class="truth-table">
+        <table>
+          <tr><th>x</th><th>y</th><th>x·y</th><th>F = NAND</th></tr>
+          <tr><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td></tr>
+          <tr><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td></tr>
+          <tr><td class="one">1</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td></tr>
+          <tr><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
+        </table>
+      </div>
+      <div class="gate-desc">AND gate followed by an inverter (the output bubble). Output is 0 only when ALL inputs are 1. NAND is a "universal gate" — any circuit can be built with only NAND gates.</div>
+    </div>
+  </div>
+
+  <!-- NOR GATE -->
+  <div class="gate-card" style="--accent: var(--glow-purple)">
+    <div class="card-header">
+      <div class="gate-name">NOR</div>
+      <div class="gate-badge">NOT OR</div>
+    </div>
+    <div class="svg-wrapper">
+      <svg width="300" height="140" viewBox="0 0 300 140">
+        <defs>
+          <filter id="glow-purple" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <line x1="30" y1="50" x2="95" y2="50" stroke="#1a5080" stroke-width="2.5"/>
+        <line x1="30" y1="90" x2="95" y2="90" stroke="#1a5080" stroke-width="2.5"/>
+        <line x1="223" y1="70" x2="270" y2="70" stroke="#1a5080" stroke-width="2.5"/>
+        <text x="20" y="46" fill="#b060ff" font-family="Share Tech Mono" font-size="12" opacity="0.6">x</text>
+        <text x="20" y="86" fill="#b060ff" font-family="Share Tech Mono" font-size="12" opacity="0.6">y</text>
+        <text x="278" y="66" fill="#b060ff" font-family="Share Tech Mono" font-size="12" opacity="0.6">F</text>
+        <!-- OR shape -->
+        <path d="M90,30 Q120,70 90,110 Q140,110 165,110 Q211,95 211,70 Q211,45 165,30 Q140,30 90,30 Z"
+          fill="none" stroke="#b060ff" stroke-width="2.5"
+          stroke-linejoin="round" filter="url(#glow-purple)"/>
+        <!-- NOT bubble -->
+        <circle cx="221" cy="70" r="10"
+          fill="#0a0e1a" stroke="#b060ff" stroke-width="2.5"
+          filter="url(#glow-purple)"/>
+        <circle cx="95" cy="50" r="4" fill="#b060ff" opacity="0.5"/>
+        <circle cx="95" cy="90" r="4" fill="#b060ff" opacity="0.5"/>
+        <circle cx="221" cy="70" r="2" fill="#b060ff" opacity="0.6"/>
+        <text x="158" y="76" fill="#b060ff" font-family="Share Tech Mono" font-size="11" text-anchor="middle" opacity="0.3">x+y̅</text>
+      </svg>
+    </div>
+    <div class="card-body">
+      <div class="info-block">
+        <div class="info-label">Expression</div>
+        <div class="expr">F = x̄+ȳ</div>
+      </div>
+      <div class="info-block">
+        <div class="info-label">Equivalent</div>
+        <div class="info-value">¬(x ∨ y)</div>
+      </div>
+      <div class="truth-table">
+        <table>
+          <tr><th>x</th><th>y</th><th>x+y</th><th>F = NOR</th></tr>
+          <tr><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td></tr>
+          <tr><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
+          <tr><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
+          <tr><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
+        </table>
+      </div>
+      <div class="gate-desc">OR gate followed by an inverter. Output is 1 only when ALL inputs are 0. Like NAND, NOR is also a universal gate capable of implementing any Boolean function.</div>
+    </div>
+  </div>
+
+  <!-- XOR GATE -->
+  <div class="gate-card" style="--accent: #ff7f3f">
+    <div class="card-header">
+      <div class="gate-name">XOR</div>
+      <div class="gate-badge">EXCLUSIVE OR</div>
+    </div>
+    <div class="svg-wrapper">
+      <svg width="300" height="140" viewBox="0 0 300 140">
+        <defs>
+          <filter id="glow-orange" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <line x1="30" y1="50" x2="100" y2="50" stroke="#1a5080" stroke-width="2.5"/>
+        <line x1="30" y1="90" x2="100" y2="90" stroke="#1a5080" stroke-width="2.5"/>
+        <line x1="213" y1="70" x2="270" y2="70" stroke="#1a5080" stroke-width="2.5"/>
+        <text x="20" y="46" fill="#ff7f3f" font-family="Share Tech Mono" font-size="12" opacity="0.6">x</text>
+        <text x="20" y="86" fill="#ff7f3f" font-family="Share Tech Mono" font-size="12" opacity="0.6">y</text>
+        <text x="278" y="66" fill="#ff7f3f" font-family="Share Tech Mono" font-size="12" opacity="0.6">F</text>
+        <!-- Extra curved line at back of OR shape -->
+        <path d="M83,30 Q112,70 83,110" fill="none" stroke="#ff7f3f" stroke-width="2.5" filter="url(#glow-orange)"/>
+        <!-- OR shape main body -->
+        <path d="M94,30 Q124,70 94,110 Q144,110 169,110 Q213,95 213,70 Q213,45 169,30 Q144,30 94,30 Z"
+          fill="none" stroke="#ff7f3f" stroke-width="2.5"
+          stroke-linejoin="round" filter="url(#glow-orange)"/>
+        <circle cx="100" cy="50" r="4" fill="#ff7f3f" opacity="0.5"/>
+        <circle cx="100" cy="90" r="4" fill="#ff7f3f" opacity="0.5"/>
+        <circle cx="213" cy="70" r="4" fill="#ff7f3f" opacity="0.5"/>
+        <text x="160" y="76" fill="#ff7f3f" font-family="Share Tech Mono" font-size="11" text-anchor="middle" opacity="0.3">x⊕y</text>
+      </svg>
+    </div>
+    <div class="card-body">
+      <div class="info-block">
+        <div class="info-label">Expression</div>
+        <div class="expr">F = x⊕y</div>
+      </div>
+      <div class="info-block">
+        <div class="info-label">Rule</div>
+        <div class="info-value">Odd inputs = 1</div>
+      </div>
+      <div class="truth-table">
+        <table>
+          <tr><th>x</th><th>y</th><th>F = XOR</th></tr>
+          <tr><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+          <tr><td class="zero">0</td><td class="one">1</td><td class="one">1</td></tr>
+          <tr><td class="one">1</td><td class="zero">0</td><td class="one">1</td></tr>
+          <tr><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
+        </table>
+      </div>
+      <div class="gate-desc">Output is 1 only when inputs are DIFFERENT from each other. Identical to OR but outputs 0 when both are 1. Symbol: OR shape with an extra curved line at the input side.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SUMMARY TABLE -->
+<div class="section-label">Quick Comparison</div>
+<div style="max-width: 1200px; margin: 0 auto;">
+  <div style="border: 1px solid var(--border); overflow: hidden; border-radius: 2px;">
+    <table style="width:100%; border-collapse:collapse; font-family:'Share Tech Mono',monospace; font-size:13px;">
+      <thead>
+        <tr style="background:rgba(255,255,255,0.04);">
+          <th style="padding:12px 16px; text-align:left; color:var(--dim); letter-spacing:2px; font-size:10px; border-bottom:1px solid var(--border);">GATE</th>
+          <th style="padding:12px 16px; text-align:center; color:var(--dim); letter-spacing:2px; font-size:10px; border-bottom:1px solid var(--border);">SYMBOL</th>
+          <th style="padding:12px 16px; text-align:left; color:var(--dim); letter-spacing:2px; font-size:10px; border-bottom:1px solid var(--border);">EXPRESSION</th>
+          <th style="padding:12px 16px; text-align:left; color:var(--dim); letter-spacing:2px; font-size:10px; border-bottom:1px solid var(--border);">OUTPUT = 1 WHEN...</th>
+          <th style="padding:12px 16px; text-align:left; color:var(--dim); letter-spacing:2px; font-size:10px; border-bottom:1px solid var(--border);">LOGIC</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid rgba(30,45,74,0.5)">
+          <td style="padding:11px 16px; color:var(--glow-cyan); font-weight:bold;">NOT</td>
+          <td style="padding:11px 16px; text-align:center; color:var(--text);">▷○</td>
+          <td style="padding:11px 16px; color:var(--glow-cyan);">F = x̄</td>
+          <td style="padding:11px 16px; color:var(--text);">Input is 0</td>
+          <td style="padding:11px 16px; color:var(--text);">¬x</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(30,45,74,0.5); background:rgba(255,255,255,0.02)">
+          <td style="padding:11px 16px; color:var(--glow-green); font-weight:bold;">AND</td>
+          <td style="padding:11px 16px; text-align:center; color:var(--text);">|D</td>
+          <td style="padding:11px 16px; color:var(--glow-green);">F = x·y</td>
+          <td style="padding:11px 16px; color:var(--text);">ALL inputs are 1</td>
+          <td style="padding:11px 16px; color:var(--text);">x ∧ y</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(30,45,74,0.5)">
+          <td style="padding:11px 16px; color:var(--glow-amber); font-weight:bold;">OR</td>
+          <td style="padding:11px 16px; text-align:center; color:var(--text);">☽▷</td>
+          <td style="padding:11px 16px; color:var(--glow-amber);">F = x+y</td>
+          <td style="padding:11px 16px; color:var(--text);">ANY input is 1</td>
+          <td style="padding:11px 16px; color:var(--text);">x ∨ y</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(30,45,74,0.5); background:rgba(255,255,255,0.02)">
+          <td style="padding:11px 16px; color:var(--glow-pink); font-weight:bold;">NAND</td>
+          <td style="padding:11px 16px; text-align:center; color:var(--text);">|D○</td>
+          <td style="padding:11px 16px; color:var(--glow-pink);">F = x̄·ȳ</td>
+          <td style="padding:11px 16px; color:var(--text);">NOT all inputs are 1</td>
+          <td style="padding:11px 16px; color:var(--text);">¬(x ∧ y)</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(30,45,74,0.5)">
+          <td style="padding:11px 16px; color:var(--glow-purple); font-weight:bold;">NOR</td>
+          <td style="padding:11px 16px; text-align:center; color:var(--text);">☽▷○</td>
+          <td style="padding:11px 16px; color:var(--glow-purple);">F = x̄+ȳ</td>
+          <td style="padding:11px 16px; color:var(--text);">ALL inputs are 0</td>
+          <td style="padding:11px 16px; color:var(--text);">¬(x ∨ y)</td>
+        </tr>
+        <tr style="background:rgba(255,255,255,0.02)">
+          <td style="padding:11px 16px; color:#ff7f3f; font-weight:bold;">XOR</td>
+          <td style="padding:11px 16px; text-align:center; color:var(--text);")||▷</td>
+          <td style="padding:11px 16px; color:#ff7f3f;">F = x⊕y</td>
+          <td style="padding:11px 16px; color:var(--text);">Inputs are DIFFERENT</td>
+          <td style="padding:11px 16px; color:var(--text);">x ⊕ y</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- INTERACTIVE CIRCUIT SAMPLE -->
+<div class="section-label">Live Circuit Sample — F(x,y,z) = xy + z̄</div>
+
+<div style="max-width:1200px; margin: 0 auto 50px;">
+
+  <div style="background:var(--panel); border:1px solid var(--border); border-radius:2px; position:relative; overflow:hidden;">
+    <!-- top accent bar -->
+    <div style="height:2px; background:linear-gradient(90deg, var(--glow-cyan), var(--glow-purple), var(--glow-green)); box-shadow:0 0 12px rgba(0,245,255,0.4);"></div>
+
+    <!-- description row -->
+    <div style="padding:20px 28px 0; display:flex; flex-wrap:wrap; align-items:center; gap:16px; justify-content:space-between;">
+      <div>
+        <div style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:4px; color:var(--dim); margin-bottom:6px;">// CIRCUIT EXAMPLE FROM BOOLEAN FUNCTIONS</div>
+        <div style="font-family:'Orbitron',sans-serif; font-size:20px; font-weight:700; color:#fff; letter-spacing:2px;">F(x, y, z) = xy + z̄</div>
+        <div style="margin-top:6px; font-size:12px; color:var(--dim);">Toggle inputs below — watch signal flow live through the circuit</div>
+      </div>
+      <div id="output-display" style="font-family:'Orbitron',sans-serif; font-size:42px; font-weight:900; padding:12px 28px; border:2px solid var(--dim); border-radius:2px; min-width:110px; text-align:center; transition:all 0.3s ease;">?</div>
+    </div>
+
+    <!-- Input toggles -->
+    <div style="padding:20px 28px 10px; display:flex; gap:16px; flex-wrap:wrap;">
+      <div class="input-toggle" id="toggle-x" onclick="toggleInput('x')">
+        <span class="toggle-label">x</span>
+        <span class="toggle-val" id="val-x">0</span>
+      </div>
+      <div class="input-toggle" id="toggle-y" onclick="toggleInput('y')">
+        <span class="toggle-label">y</span>
+        <span class="toggle-val" id="val-y">0</span>
+      </div>
+      <div class="input-toggle" id="toggle-z" onclick="toggleInput('z')">
+        <span class="toggle-label">z</span>
+        <span class="toggle-val" id="val-z">0</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px; margin-left:auto; flex-wrap:wrap;">
+        <div class="signal-legend"><span class="sig-dot" style="background:#1a5080;box-shadow:none;"></span> wire = 0</div>
+        <div class="signal-legend"><span class="sig-dot" style="background:var(--glow-cyan);"></span> wire = 1</div>
+      </div>
+    </div>
+
+    <!-- Circuit SVG -->
+    <div style="padding:10px 28px 24px; overflow-x:auto;">
+      <svg id="circuit-svg" viewBox="0 0 860 280" width="100%" style="min-width:600px; display:block;">
+        <defs>
+          <filter id="glow-c" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="3.5" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="glow-s" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="2" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#1a5080"/>
+          </marker>
+          <marker id="arr-on" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#00f5ff"/>
+          </marker>
+        </defs>
+
+        <!-- ============ INPUT NODES ============ -->
+        <!-- x input -->
+        <circle id="node-x" cx="60" cy="90" r="18" fill="#0f1526" stroke="#1a5080" stroke-width="2"/>
+        <text x="60" y="85" text-anchor="middle" fill="#5a7090" font-family="Orbitron" font-size="11" font-weight="700">x</text>
+        <text id="nval-x" x="60" y="100" text-anchor="middle" fill="#5a7090" font-family="Share Tech Mono" font-size="13" font-weight="700">0</text>
+
+        <!-- y input -->
+        <circle id="node-y" cx="60" cy="170" r="18" fill="#0f1526" stroke="#1a5080" stroke-width="2"/>
+        <text x="60" y="165" text-anchor="middle" fill="#5a7090" font-family="Orbitron" font-size="11" font-weight="700">y</text>
+        <text id="nval-y" x="60" y="180" text-anchor="middle" fill="#5a7090" font-family="Share Tech Mono" font-size="13" font-weight="700">0</text>
+
+        <!-- z input -->
+        <circle id="node-z" cx="60" cy="250" r="18" fill="#0f1526" stroke="#1a5080" stroke-width="2"/>
+        <text x="60" y="245" text-anchor="middle" fill="#5a7090" font-family="Orbitron" font-size="11" font-weight="700">z</text>
+        <text id="nval-z" x="60" y="260" text-anchor="middle" fill="#5a7090" font-family="Share Tech Mono" font-size="13" font-weight="700">0</text>
+
+        <!-- ============ WIRES: inputs to gates ============ -->
+        <!-- x → AND (top input) -->
+        <line id="wire-x-and" x1="78" y1="90" x2="230" y2="90" stroke="#1a5080" stroke-width="2.5"/>
+        <!-- y → AND (bottom input) -->
+        <line id="wire-y-and" x1="78" y1="170" x2="230" y2="170" stroke="#1a5080" stroke-width="2.5"/>
+        <!-- z → NOT -->
+        <line id="wire-z-not" x1="78" y1="250" x2="380" y2="250" stroke="#1a5080" stroke-width="2.5"/>
+
+        <!-- ============ AND GATE (center ~130y) ============ -->
+        <!-- AND body -->
+        <path id="gate-and-body" d="M230,70 L230,190 L290,190 Q360,190 360,130 Q360,70 290,70 Z"
+          fill="none" stroke="#1a5080" stroke-width="2.5" stroke-linejoin="round"/>
+        <!-- AND label -->
+        <text x="288" y="135" text-anchor="middle" fill="#1a5080" font-family="Share Tech Mono" font-size="11">AND</text>
+
+        <!-- ============ NOT GATE ============ -->
+        <!-- NOT body -->
+        <path id="gate-not-body" d="M380,230 L380,270 L435,250 Z"
+          fill="none" stroke="#1a5080" stroke-width="2.5" stroke-linejoin="round"/>
+        <!-- NOT bubble -->
+        <circle id="gate-not-bubble" cx="445" cy="250" r="10" fill="#0a0e1a" stroke="#1a5080" stroke-width="2.5"/>
+        <!-- NOT label -->
+        <text x="408" y="255" text-anchor="middle" fill="#1a5080" font-family="Share Tech Mono" font-size="10">NOT</text>
+
+        <!-- ============ WIRES: AND/NOT → OR ============ -->
+        <!-- AND out → bend → OR top input -->
+        <polyline id="wire-and-or" points="360,130 560,130" stroke="#1a5080" stroke-width="2.5" fill="none"/>
+        <!-- NOT out → bend → OR bottom input -->
+        <polyline id="wire-not-or" points="455,250 510,250 510,210 560,210" stroke="#1a5080" stroke-width="2.5" fill="none"/>
+
+        <!-- ============ OR GATE ============ -->
+        <path id="gate-or-body" d="M560,110 Q590,170 560,230 Q610,230 640,230 Q690,210 690,170 Q690,130 640,110 Q610,110 560,110 Z"
+          fill="none" stroke="#1a5080" stroke-width="2.5" stroke-linejoin="round"/>
+        <!-- OR label -->
+        <text x="632" y="175" text-anchor="middle" fill="#1a5080" font-family="Share Tech Mono" font-size="11">OR</text>
+
+        <!-- ============ OUTPUT WIRE ============ -->
+        <line id="wire-out" x1="690" y1="170" x2="790" y2="170" stroke="#1a5080" stroke-width="2.5"/>
+        <!-- Output node -->
+        <circle id="node-out" cx="800" cy="170" r="20" fill="#0f1526" stroke="#1a5080" stroke-width="2"/>
+        <text x="800" y="165" text-anchor="middle" fill="#5a7090" font-family="Orbitron" font-size="10" font-weight="700">F</text>
+        <text id="nval-f" x="800" y="180" text-anchor="middle" fill="#5a7090" font-family="Share Tech Mono" font-size="14" font-weight="700">?</text>
+
+        <!-- ============ INTERMEDIATE LABELS ============ -->
+        <!-- AND output label -->
+        <text id="lbl-and-out" x="465" y="125" fill="#1a5080" font-family="Share Tech Mono" font-size="11">xy=?</text>
+        <!-- NOT output label -->
+        <text id="lbl-not-out" x="465" y="244" fill="#1a5080" font-family="Share Tech Mono" font-size="11">z̄=?</text>
+        <!-- Stage labels -->
+        <text x="290" y="60" text-anchor="middle" fill="#1a3a5a" font-family="Share Tech Mono" font-size="10" letter-spacing="1">STAGE 1</text>
+        <text x="415" y="220" text-anchor="middle" fill="#1a3a5a" font-family="Share Tech Mono" font-size="10" letter-spacing="1">STAGE 2</text>
+        <text x="625" y="100" text-anchor="middle" fill="#1a3a5a" font-family="Share Tech Mono" font-size="10" letter-spacing="1">STAGE 3</text>
+      </svg>
+    </div>
+
+    <!-- Step-by-step breakdown -->
+    <div style="padding:0 28px 28px; display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:12px;">
+      <div class="step-box" id="step1">
+        <div class="step-num">01</div>
+        <div class="step-expr" id="s1-expr">x · y = ?</div>
+        <div class="step-desc">AND gate: multiply x and y</div>
+      </div>
+      <div class="step-box" id="step2">
+        <div class="step-num">02</div>
+        <div class="step-expr" id="s2-expr">z̄ = ?</div>
+        <div class="step-desc">NOT gate: complement z</div>
+      </div>
+      <div class="step-box" id="step3">
+        <div class="step-num">03</div>
+        <div class="step-expr" id="s3-expr">? + ? = ?</div>
+        <div class="step-desc">OR gate: sum the results</div>
+      </div>
+      <div class="step-box" id="step4" style="border-color: var(--dim);">
+        <div class="step-num" style="color:var(--text);">OUT</div>
+        <div class="step-expr" id="s4-expr" style="color:var(--text); font-size:22px;">F = ?</div>
+        <div class="step-desc">Final output</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full truth table for F = xy + z̄ -->
+  <div style="margin-top:28px; background:var(--panel); border:1px solid var(--border); border-radius:2px; overflow:hidden;">
+    <div style="padding:14px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px;">
+      <span style="font-family:'Orbitron',sans-serif; font-size:13px; color:var(--glow-amber); letter-spacing:2px;">TRUTH TABLE</span>
+      <span style="font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--dim);">F(x,y,z) = xy + z̄  — all 8 combinations</span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table id="full-truth-table" style="width:100%; border-collapse:collapse; font-family:'Share Tech Mono',monospace; font-size:13px; min-width:500px;">
+        <thead>
+          <tr style="background:rgba(255,255,255,0.04);">
+            <th style="padding:10px 16px; color:var(--dim); letter-spacing:2px; font-size:10px; border-bottom:1px solid var(--border); text-align:center;">x</th>
+            <th style="padding:10px 16px; color:var(--dim); letter-spacing:2px; font-size:10px; border-bottom:1px solid var(--border); text-align:center;">y</th>
+            <th style="padding:10px 16px; color:var(--dim); letter-spacing:2px; font-size:10px; border-bottom:1px solid var(--border); text-align:center;">z</th>
+            <th style="padding:10px 16px; color:var(--dim); letter-spacing:2px; font-size:10px; border-bottom:1px solid var(--border); text-align:center;">x·y</th>
+            <th style="padding:10px 16px; color:var(--dim); letter-spacing:2px; font-size:10px; border-bottom:1px solid var(--border); text-align:center;">z̄</th>
+            <th style="padding:10px 16px; color:var(--glow-amber); letter-spacing:2px; font-size:10px; border-bottom:1px solid var(--border); text-align:center;">F = xy + z̄</th>
+          </tr>
+        </thead>
+        <tbody id="tt-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<style>
+  .input-toggle {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 20px;
+    background: #0d1420;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+    min-width: 100px;
+  }
+  .input-toggle:hover { border-color: var(--glow-cyan); }
+  .input-toggle.active {
+    border-color: var(--glow-cyan);
+    background: rgba(0,245,255,0.07);
+    box-shadow: 0 0 12px rgba(0,245,255,0.15);
+  }
+  .toggle-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--dim);
+    letter-spacing: 2px;
+  }
+  .input-toggle.active .toggle-label { color: var(--glow-cyan); text-shadow: 0 0 8px var(--glow-cyan); }
+  .toggle-val {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--dim);
+    margin-left: auto;
+  }
+  .input-toggle.active .toggle-val { color: var(--glow-green); text-shadow: 0 0 8px var(--glow-green); }
+
+  .signal-legend {
+    display: flex; align-items: center; gap: 6px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+  }
+  .sig-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    box-shadow: 0 0 6px var(--glow-cyan);
+    flex-shrink: 0;
+  }
+
+  .step-box {
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 14px 16px;
+    transition: all 0.3s ease;
+  }
+  .step-box.active {
+    border-color: var(--glow-cyan);
+    background: rgba(0,245,255,0.05);
+    box-shadow: 0 0 14px rgba(0,245,255,0.1);
+  }
+  .step-num {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--dim);
+    margin-bottom: 6px;
+  }
+  .step-expr {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 18px;
+    color: var(--dim);
+    margin-bottom: 4px;
+    transition: all 0.3s;
+  }
+  .step-box.active .step-expr { color: var(--glow-cyan); text-shadow: 0 0 8px var(--glow-cyan); }
+  .step-desc {
+    font-size: 11px;
+    color: var(--dim);
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  #output-display.out-1 {
+    color: var(--glow-green);
+    border-color: var(--glow-green);
+    text-shadow: 0 0 20px var(--glow-green);
+    box-shadow: 0 0 24px rgba(57,255,106,0.2);
+  }
+  #output-display.out-0 {
+    color: #ff4040;
+    border-color: #ff4040;
+    text-shadow: 0 0 20px rgba(255,64,64,0.8);
+    box-shadow: 0 0 24px rgba(255,64,64,0.15);
+  }
+
+  .tt-row-active td {
+    background: rgba(0,245,255,0.07) !important;
+  }
+  .tt-row-active td:last-child {
+    color: var(--glow-amber) !important;
+    text-shadow: 0 0 8px var(--glow-amber);
+    font-weight: bold;
+  }
+</style>
+
+<script>
+  const state = { x: 0, y: 0, z: 0 };
+
+  // Build truth table rows
+  const ttBody = document.getElementById('tt-body');
+  const combos = [];
+  for (let x = 1; x >= 0; x--)
+    for (let y = 1; y >= 0; y--)
+      for (let z = 1; z >= 0; z--) {
+        const xy = x & y, zn = z ^ 1, f = xy | zn;
+        combos.push({x,y,z,xy,zn,f});
+        const tr = document.createElement('tr');
+        tr.id = `tt-${x}${y}${z}`;
+        tr.style.borderBottom = '1px solid rgba(30,45,74,0.5)';
+        tr.innerHTML = [x,y,z,xy,zn,f].map((v,i) => {
+          const isOut = i === 5;
+          const col = v === 1 ? (isOut ? 'var(--glow-amber)' : 'var(--glow-green)') : 'var(--dim)';
+          return `<td style="padding:9px 16px; text-align:center; color:${col}; font-size:13px;">${v}</td>`;
+        }).join('');
+        ttBody.appendChild(tr);
+      }
+
+  function toggleInput(k) {
+    state[k] ^= 1;
+    document.getElementById(`toggle-${k}`).classList.toggle('active', state[k] === 1);
+    document.getElementById(`val-${k}`).textContent = state[k];
+    updateCircuit();
+  }
+
+  function wireColor(v) { return v ? '#00f5ff' : '#1a5080'; }
+  function wireGlow(v)  { return v ? 'url(#glow-s)' : 'none'; }
+  function nodeColor(v) { return v ? 'rgba(0,245,255,0.12)' : '#0f1526'; }
+  function nodeBorder(v){ return v ? '#00f5ff' : '#1a5080'; }
+  function textColor(v) { return v ? '#00f5ff' : '#5a7090'; }
+
+  function setWire(id, v) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.setAttribute('stroke', wireColor(v));
+    el.setAttribute('filter', wireGlow(v));
+  }
+  function setGatePart(id, v, col1='#00f5ff', col0='#1a5080') {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.setAttribute('stroke', v ? col1 : col0);
+    el.setAttribute('filter', v ? 'url(#glow-c)' : 'none');
+  }
+  function setNode(circleId, textId, v, label) {
+    const c = document.getElementById(circleId);
+    const t = document.getElementById(textId);
+    if (c) { c.setAttribute('fill', nodeColor(v)); c.setAttribute('stroke', nodeBorder(v)); }
+    if (t) { t.textContent = label !== undefined ? label : v; t.setAttribute('fill', textColor(v)); }
+  }
+
+  function updateCircuit() {
+    const {x,y,z} = state;
+    const xy = x & y;
+    const zn = z ^ 1;
+    const f  = xy | zn;
+
+    // Input nodes
+    setNode('node-x', 'nval-x', x, x);
+    setNode('node-y', 'nval-y', y, y);
+    setNode('node-z', 'nval-z', z, z);
+
+    // Input wires
+    setWire('wire-x-and', x);
+    setWire('wire-y-and', y);
+    setWire('wire-z-not', z);
+
+    // AND gate
+    const andActive = x && y;
+    setGatePart('gate-and-body', andActive, '#39ff6a', '#1a5080');
+
+    // NOT gate
+    setGatePart('gate-not-body', z, '#00f5ff', '#1a5080');
+    setGatePart('gate-not-bubble', zn, '#00f5ff', '#1a5080');
+
+    // AND → OR wire
+    setWire('wire-and-or', xy);
+    // NOT → OR wire
+    setWire('wire-not-or', zn);
+
+    // OR gate
+    const orActive = f;
+    setGatePart('gate-or-body', orActive, '#ffb700', '#1a5080');
+
+    // Output wire + node
+    setWire('wire-out', f);
+    setNode('node-out', 'nval-f', f, f);
+
+    // Intermediate labels
+    const lbl1 = document.getElementById('lbl-and-out');
+    const lbl2 = document.getElementById('lbl-not-out');
+    if (lbl1) { lbl1.textContent = `xy=${xy}`; lbl1.setAttribute('fill', xy ? '#39ff6a' : '#1a3a5a'); }
+    if (lbl2) { lbl2.textContent = `z̄=${zn}`;  lbl2.setAttribute('fill', zn ? '#00f5ff' : '#1a3a5a'); }
+
+    // Step boxes
+    const steps = [
+      { id:'step1', expr:`x·y = ${x}·${y} = ${xy}`, active: xy },
+      { id:'step2', expr:`z̄ = ${zn}`, active: zn },
+      { id:'step3', expr:`${xy} + ${zn} = ${f}`, active: f },
+      { id:'step4', expr:`F = ${f}`, active: true }
+    ];
+    const s1 = document.getElementById('s1-expr');
+    const s2 = document.getElementById('s2-expr');
+    const s3 = document.getElementById('s3-expr');
+    const s4 = document.getElementById('s4-expr');
+    if(s1) s1.textContent = `x·y = ${x}·${y} = ${xy}`;
+    if(s2) s2.textContent = `z̄ = ${z}̄ = ${zn}`;
+    if(s3) s3.textContent = `${xy} + ${zn} = ${f}`;
+    if(s4) s4.textContent = `F = ${f}`;
+    document.getElementById('step1').classList.toggle('active', xy===1);
+    document.getElementById('step2').classList.toggle('active', zn===1);
+    document.getElementById('step3').classList.toggle('active', f===1);
+    document.getElementById('step4').classList.toggle('active', true);
+    s4.style.color = f ? 'var(--glow-green)' : '#ff4040';
+
+    // Output display
+    const disp = document.getElementById('output-display');
+    disp.textContent = f;
+    disp.className = f ? 'out-1' : 'out-0';
+
+    // Highlight truth table row
+    combos.forEach(({x:cx,y:cy,z:cz}) => {
+      const tr = document.getElementById(`tt-${cx}${cy}${cz}`);
+      if (tr) tr.className = (cx===x && cy===y && cz===z) ? 'tt-row-active' : '';
+    });
+  }
+
+  // Init
+  updateCircuit();
+</script>
+
+<footer>
+  <p>// BOOLEAN ALGEBRA — LOGIC GATES REFERENCE — IEEE STANDARD SYMBOLS //</p>
+</footer>
+
+</body>
+</html>
